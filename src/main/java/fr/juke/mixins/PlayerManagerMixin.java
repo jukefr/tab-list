@@ -3,7 +3,7 @@ package fr.juke.mixins;
 import fr.juke.commands.util.TextFormatter;
 import fr.juke.config.Config;
 import net.minecraft.network.ClientConnection;
-import net.minecraft.network.packet.Packet;
+import net.minecraft.network.Packet;
 import net.minecraft.network.packet.s2c.play.PlayerListHeaderS2CPacket;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -24,8 +24,8 @@ public abstract class PlayerManagerMixin {
     public void updatePlayerLatency(CallbackInfo ci) {
         @SuppressWarnings("ConstantConditions")
         PlayerListMixin packet = (PlayerListMixin) new PlayerListHeaderS2CPacket(
-                Text.literal(TextFormatter.tablistChars(Config.INSTANCE.header)),
-                Text.literal(TextFormatter.tablistChars(Config.INSTANCE.footer))
+                Text.of(TextFormatter.tablistChars(Config.INSTANCE.header)),
+                Text.of(TextFormatter.tablistChars(Config.INSTANCE.footer))
         );
         this.sendToAll(packet);
     }
@@ -33,6 +33,6 @@ public abstract class PlayerManagerMixin {
     @Inject(at = @At("TAIL"), method = "onPlayerConnect")
     public void onPlayerConnect(ClientConnection connection, ServerPlayerEntity player, CallbackInfo ci) {
         if (!Config.INSTANCE.motd.isEmpty()) player.sendMessage(
-                Text.literal(Config.INSTANCE.motd), false);
+                Text.of(Config.INSTANCE.motd), false);
     }
 }
