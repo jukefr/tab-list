@@ -7,7 +7,7 @@ import net.minecraft.network.Packet;
 import net.minecraft.network.packet.s2c.play.PlayerListHeaderS2CPacket;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
+import net.minecraft.text.LiteralText;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -24,15 +24,15 @@ public abstract class PlayerManagerMixin {
     public void updatePlayerLatency(CallbackInfo ci) {
         @SuppressWarnings("ConstantConditions")
         PlayerListMixin packet = (PlayerListMixin) new PlayerListHeaderS2CPacket(
-                Text.of(TextFormatter.tablistChars(Config.INSTANCE.header)),
-                Text.of(TextFormatter.tablistChars(Config.INSTANCE.footer))
         );
+        packet.setHeader(new LiteralText(TextFormatter.tablistChars(Config.INSTANCE.header)));
+        packet.setFooter(new LiteralText(TextFormatter.tablistChars(Config.INSTANCE.footer)));
         this.sendToAll(packet);
     }
 
     @Inject(at = @At("TAIL"), method = "onPlayerConnect")
     public void onPlayerConnect(ClientConnection connection, ServerPlayerEntity player, CallbackInfo ci) {
         if (!Config.INSTANCE.motd.isEmpty()) player.sendMessage(
-                Text.of(Config.INSTANCE.motd), false);
+                new LiteralText(Config.INSTANCE.motd), false);
     }
 }
