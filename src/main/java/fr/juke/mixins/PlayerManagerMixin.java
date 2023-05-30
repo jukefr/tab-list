@@ -3,7 +3,7 @@ package fr.juke.mixins;
 import fr.juke.commands.util.TextFormatter;
 import fr.juke.config.Config;
 import net.minecraft.network.ClientConnection;
-import net.minecraft.network.packet.Packet;
+import net.minecraft.network.Packet;
 import net.minecraft.network.packet.s2c.play.PlayerListHeaderS2CPacket;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerPlayerEntity;
