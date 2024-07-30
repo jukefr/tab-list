@@ -1,8 +1,8 @@
 # Fabric Tab List
 
-<a href='https://www.curseforge.com/minecraft/mc-mods/fabric-api'><img src='https://code.juke.fr/kay/fabric-tab/raw/commit/6193b677d769bb0d590ac02fe173f9749489ddf7/resources/fabric-api.png' width="150" alt="fabric-api logo"></a>
+<a href='https://www.curseforge.com/minecraft/mc-mods/fabric-api'><img src='https://codeberg.org/juke/fabric-tab/raw/branch/main/resources/fabric-api.png' width="150" alt="fabric-api logo"></a>
 
-![screenshot showing the mod in action, it changes the tab list header and footer and shows a message of the day](https://code.juke.fr/kay/fabric-tab/raw/commit/6193b677d769bb0d590ac02fe173f9749489ddf7/resources/screenshot.png)
+![screenshot showing the mod in action, it changes the tab list header and footer and shows a message of the day](https://codeberg.org/juke/fabric-tab/raw/branch/main/resources/screenshot.png)
 
 **Note: this mod is server side only and won't work on clients**
 
