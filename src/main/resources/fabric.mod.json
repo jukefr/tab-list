@@ -22,7 +22,8 @@
     "fabric-tab.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.4.0",
-    "fabric": "*"
+    "fabricloader": ">=0.15.11",
+    "java": ">=21",
+    "minecraft": "~1.21"
   }
 }

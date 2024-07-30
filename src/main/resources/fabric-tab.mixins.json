@@ -1,7 +1,7 @@
 {
   "required": true,
   "package": "fr.juke.mixins",
-  "compatibilityLevel": "JAVA_8",
+  "compatibilityLevel": "JAVA_21",
   "mixins": [
     "PlayerManagerMixin"
   ],
