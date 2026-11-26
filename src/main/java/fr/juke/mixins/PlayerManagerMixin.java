@@ -2,27 +2,27 @@ package fr.juke.mixins;
 
 import fr.juke.config.Config;
 import fr.juke.util.TextFormatter;
-import net.minecraft.network.ClientConnection;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.s2c.play.PlayerListHeaderS2CPacket;
-import net.minecraft.server.PlayerManager;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.network.ConnectedClientData;
-import net.minecraft.text.Text;
+import net.minecraft.network.Connection;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientboundTabListPacket;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.network.CommonListenerCookie;
+import net.minecraft.server.players.PlayerList;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(PlayerManager.class)
+@Mixin(PlayerList.class)
 public abstract class PlayerManagerMixin {
     public int customizationUpdateTimer;
 
     @Shadow
-    public abstract void sendToAll(Packet<?> packet);
+    public abstract void broadcastAll(Packet<?> packet);
 
-    @Inject(at = @At("HEAD"), method = "updatePlayerLatency")
+    @Inject(at = @At("HEAD"), method = "tick")
     public void updatePlayerLatency(CallbackInfo ci) {
         if (
                 Config.INSTANCE.enabled
@@ -31,13 +31,13 @@ public abstract class PlayerManagerMixin {
                                 ? 20 // fallback if unset in config file
                                 : Config.INSTANCE.refreshTickInterval)
         ) {
-            this.sendToAll(new PlayerListHeaderS2CPacket(
-                    Text.literal(TextFormatter.tablistChars(
+            this.broadcastAll(new ClientboundTabListPacket(
+                    Component.literal(TextFormatter.tablistChars(
                             Config.INSTANCE.header != null
                                     ? Config.INSTANCE.header
                                     : "" // fallback if unset in config file
                     )),
-                    Text.literal(TextFormatter.tablistChars(
+                    Component.literal(TextFormatter.tablistChars(
                             Config.INSTANCE.footer != null
                                     ? Config.INSTANCE.footer
                                     : "" // fallback if unset in config file
@@ -46,13 +46,13 @@ public abstract class PlayerManagerMixin {
         }
     }
 
-    @Inject(at = @At("TAIL"), method = "onPlayerConnect")
-    public void onPlayerConnect(ClientConnection connection, ServerPlayerEntity player, ConnectedClientData clientData, CallbackInfo ci) {
+    @Inject(at = @At("TAIL"), method = "placeNewPlayer")
+    public void onPlayerConnect(Connection connection, ServerPlayer player, CommonListenerCookie clientData, CallbackInfo ci) {
         if (
                 Config.INSTANCE.enabled
                         && Config.INSTANCE.motd != null // check if set in config file
                         && !Config.INSTANCE.motd.isEmpty())
-            player.sendMessage(
-                    Text.literal(Config.INSTANCE.motd), false);
+            player.sendSystemMessage(
+                    Component.literal(Config.INSTANCE.motd));
     }
 }
