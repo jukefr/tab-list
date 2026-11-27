@@ -362,6 +362,10 @@ Old tags can stay for history.
 
 Modrinth has an API for this. The project id is `9J38edBm` (slug `tab`).
 
+The Modrinth project page body should mirror `README.md`. When the README changes, update the
+project body with `PATCH /v2/project/9J38edBm` and a JSON field named `body`. Do not change the
+slug; it must stay `tab`.
+
 ### Token
 
 The token lives in `.env` at the repository root:
