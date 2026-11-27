@@ -4,7 +4,7 @@
 
 [![Modrinth](https://img.shields.io/modrinth/dt/tab?style=flat-square&logo=modrinth&label=Modrinth)](https://modrinth.com/mod/tab)
 [![GitHub release](https://img.shields.io/github/v/release/jukefr/tab-list?style=flat-square&logo=github)](https://github.com/jukefr/tab-list/releases)
-[![License](https://img.shields.io/badge/license-GPL--3.0-blue?style=flat-square)](LICENSE)
+[![License](https://img.shields.io/badge/license-GPL--3.0-blue?style=flat-square)](https://github.com/jukefr/tab-list/blob/main/LICENSE)
 
 ![Tab List showing a custom server header, TPS, MSPT, player count, uptime, and a message of the day](https://raw.githubusercontent.com/jukefr/tab-list/main/resources/screenshot.png)
 
@@ -135,4 +135,4 @@ Use the [issue tracker](https://github.com/jukefr/tab-list/issues).
 
 ## License
 
-GPL-3.0. See [LICENSE](LICENSE).
+GPL-3.0. See [LICENSE](https://github.com/jukefr/tab-list/blob/main/LICENSE).
