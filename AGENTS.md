@@ -4,15 +4,20 @@ Instructions for future agents working on this repository.
 
 ## Project overview
 
-Fabric Tab List (`fabric-tab`) is a small **server-side only** mod for **Fabric and NeoForge**
+Tab List (`tab-list`) is a small **server-side only** mod for **Fabric and NeoForge**
 that customizes the player list (tab list) header/footer and sends a MOTD on login.
 
-- Mod id: `fabric-tab` on Fabric, `fabric_tab` on NeoForge (NeoForge ids cannot contain `-`)
+- Display/project name: Tab List
+- Internal Fabric mod id: `fabric-tab`; internal NeoForge mod id: `fabric_tab`
+  (NeoForge ids cannot contain `-`)
 - Fabric main class: `fr.juke.FabricTab` (on old Fabric branches it is `fr.juke.Main`)
 - NeoForge main class: `fr.juke.FabricTab`
 - Config file: `config/fabric-tab.json` (same file on both loaders)
-- GitHub: https://github.com/jukefr/fabric-tab
-- Modrinth: https://modrinth.com/mod/tab (project id `9J38edBm`)
+- GitHub: https://github.com/jukefr/tab-list
+- Modrinth: https://modrinth.com/mod/tab (project id `9J38edBm`, slug stays `tab`)
+
+The display name changed from "Fabric Tab List" to "Tab List". Do **not** rename the internal
+mod ids, config file, or jar prefix (`fabric-tab`) without a compatibility/migration plan.
 
 ## The most important rule
 
@@ -316,9 +321,9 @@ Create the release:
 ```bash
 gh release create "2.2.0+1.18" \
   "fabric-tab-2.2.0+mc1.18.x.jar" \
-  -R jukefr/fabric-tab \
+  -R jukefr/tab-list \
   --title "2.2.0 - 1.18 - 1.18.2" \
-  --notes "Fabric Tab List 2.2.0 for Minecraft 1.18 through 1.18.2." \
+  --notes "Tab List 2.2.0 for Minecraft 1.18 through 1.18.2." \
   --latest=false
 ```
 
@@ -340,7 +345,7 @@ gh release upload "2.2.0+1.21" \
   fabric-tab-2.2.0+mc1.21.4-neoforge.jar \
   fabric-tab-2.2.0+mc1.21.8-neoforge.jar \
   fabric-tab-2.2.0+mc1.21.11-neoforge.jar \
-  -R jukefr/fabric-tab
+  -R jukefr/tab-list
 ```
 
 The release notes should list which NeoForge versions are in the release.
@@ -348,7 +353,7 @@ The release notes should list which NeoForge versions are in the release.
 When replacing an older release series, delete the superseded releases:
 
 ```bash
-gh release delete "<old-tag>" -R jukefr/fabric-tab --yes
+gh release delete "<old-tag>" -R jukefr/tab-list --yes
 ```
 
 Old tags can stay for history.
@@ -393,7 +398,7 @@ set +a
 Example:
 
 ```bash
-UA="jukefr/fabric-tab-publisher/1.0 (code@juke.fr)"
+UA="jukefr/tab-list-publisher/1.0 (code@juke.fr)"
 DATA='{
   "project_id": "9J38edBm",
   "name": "2.2.0 for 1.18 - 1.18.2",
@@ -451,7 +456,7 @@ Archive one version:
 
 ```bash
 curl -X PATCH "https://api.modrinth.com/v2/version/<version-id>" \
-  -A "jukefr/fabric-tab-publisher/1.0 (code@juke.fr)" \
+  -A "jukefr/tab-list-publisher/1.0 (code@juke.fr)" \
   -H "Authorization: $MODRINTH_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{"status":"archived"}'
@@ -474,7 +479,7 @@ EOF
 while read -r id version; do
   code=$(curl -s -o /dev/null -w '%{http_code}' -X PATCH \
     "https://api.modrinth.com/v2/version/$id" \
-    -A "jukefr/fabric-tab-publisher/1.0 (code@juke.fr)" \
+    -A "jukefr/tab-list-publisher/1.0 (code@juke.fr)" \
     -H "Authorization: $MODRINTH_TOKEN" \
     -H "Content-Type: application/json" \
     -d '{"status":"archived"}')

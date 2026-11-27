@@ -1,8 +1,8 @@
-# Fabric Tab List
+# Tab List
 
-<a href='https://www.curseforge.com/minecraft/mc-mods/fabric-api'><img src='https://raw.githubusercontent.com/jukefr/fabric-tab/main/resources/fabric-api.png' width="150" alt="fabric-api logo"></a>
+<a href='https://www.curseforge.com/minecraft/mc-mods/fabric-api'><img src='https://raw.githubusercontent.com/jukefr/tab-list/main/resources/fabric-api.png' width="150" alt="fabric-api logo"></a>
 
-![screenshot showing the mod in action, it changes the tab list header and footer and shows a message of the day](https://raw.githubusercontent.com/jukefr/fabric-tab/main/resources/screenshot.png)
+![screenshot showing the mod in action, it changes the tab list header and footer and shows a message of the day](https://raw.githubusercontent.com/jukefr/tab-list/main/resources/screenshot.png)
 
 **Note: this mod is server side only and won't work on clients**
 
@@ -10,6 +10,9 @@ A Fabric and NeoForge mod that lets you customize the player list (tab list) and
 
 NeoForge builds are available from the releases page and Modrinth for 1.21.1, 1.21.4,
 1.21.8, 1.21.11, 26.1.2, 26.2 and 26.3.
+
+The internal mod ids remain `fabric-tab` (Fabric) and `fabric_tab` (NeoForge) for compatibility.
+The config file is still `config/fabric-tab.json`.
 
 The config file is located in the config directory (`config/fabric-tab.json`) and looks like this:
 
