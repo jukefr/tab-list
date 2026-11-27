@@ -4,12 +4,13 @@ Instructions for future agents working on this repository.
 
 ## Project overview
 
-Fabric Tab List (`fabric-tab`) is a small **server-side only** Fabric mod that customizes the
-player list (tab list) header/footer and sends a MOTD on login.
+Fabric Tab List (`fabric-tab`) is a small **server-side only** mod for **Fabric and NeoForge**
+that customizes the player list (tab list) header/footer and sends a MOTD on login.
 
-- Mod id: `fabric-tab`
-- Main class: `fr.juke.FabricTab` (on old branches it is `fr.juke.Main`)
-- Config file: `config/fabric-tab.json`
+- Mod id: `fabric-tab` on Fabric, `fabric_tab` on NeoForge (NeoForge ids cannot contain `-`)
+- Fabric main class: `fr.juke.FabricTab` (on old Fabric branches it is `fr.juke.Main`)
+- NeoForge main class: `fr.juke.FabricTab`
+- Config file: `config/fabric-tab.json` (same file on both loaders)
 - GitHub: https://github.com/jukefr/fabric-tab
 - Modrinth: https://modrinth.com/mod/tab (project id `9J38edBm`)
 
@@ -51,8 +52,24 @@ There is one branch per Minecraft version, with `main` also pointing at the late
 | `26.1` – `26.1.2` | Mojang mappings/unobfuscated |
 | `26.2` – `26.3` | Mojang mappings/unobfuscated |
 
+NeoForge support lives on separate branches, one per supported NeoForge line:
+
+| NeoForge branch | Minecraft version | NeoForge version |
+|---|---|---|
+| `neoforge-1.21.1` | 1.21.1 | `21.1.268` |
+| `neoforge-1.21.4` | 1.21.4 | `21.4.161` |
+| `neoforge-1.21.8` | 1.21.8 | `21.8.57` |
+| `neoforge-1.21.11` | 1.21.11 | `21.11.48` |
+| `neoforge-26.1.2` | 26.1.2 | `26.1.2.130` |
+| `neoforge-26.2` | 26.2 | `26.2.0.95` |
+| `neoforge-26.3` | 26.3 | `26.3.0.118` |
+
+NeoForge only publishes for 26.1.2, not 26.1 or 26.1.1, so the NeoForge 26.1 support is
+exactly 26.1.2.
+
 Branches older than 26.x use Yarn mappings. Minecraft 26.x has no Yarn mappings and ships
 unobfuscated, so those branches use the official Mojang names and the non-remap Loom plugin.
+NeoForge branches use Mojang names for every version.
 
 ### Branch/tag name ambiguity
 
@@ -94,6 +111,16 @@ Use the JDK that matches the Gradle version. Getting this wrong causes confusing
 | 1.21.1 – 1.21.11 | 9.8.2 | **25** | Loom 1.19.4, Yarn | 21 |
 | 26.1 – 26.3 | 9.8.2 | **25** | Loom 1.19.4, Mojang names | 25 |
 
+NeoForge branches have a different toolchain:
+
+| NeoForge range | Gradle | Build JDK | Plugin | Java target |
+|---|---|---|---|---|
+| `neoforge-1.21.1` – `neoforge-1.21.11` | 9.2.1 | 21 | ModDevGradle 2.0.148 | 21 |
+| `neoforge-26.1.2` – `neoforge-26.3` | 9.2.1 | 25 | ModDevGradle 2.0.148 | 25 |
+
+NeoForge builds take longer on the first run because ModDevGradle decompiles and patches
+Minecraft for each NeoForge version.
+
 Important: Loom 1.19.4 requires **Java 25 to run Gradle**, even on branches whose compiled
 release target is Java 21.
 
@@ -114,9 +141,19 @@ PATH=/usr/lib/jvm/java-21-openjdk/bin:$PATH \
 JAVA_HOME=/usr/lib/jvm/java-25-openjdk \
 PATH=/usr/lib/jvm/java-25-openjdk/bin:$PATH \
 ./gradlew build --no-daemon
+
+# NeoForge 1.21.x
+JAVA_HOME=/usr/lib/jvm/java-21-openjdk \
+PATH=/usr/lib/jvm/java-21-openjdk/bin:$PATH \
+./gradlew build --no-daemon
+
+# NeoForge 26.x
+JAVA_HOME=/usr/lib/jvm/java-25-openjdk \
+PATH=/usr/lib/jvm/java-25-openjdk/bin:$PATH \
+./gradlew build --no-daemon
 ```
 
-Built jar: `build/libs/fabric-tab-<version>.jar`.
+NeoForge jars are `build/libs/fabric-tab-<version>.jar` as well.
 
 ## Code layout differences
 
@@ -156,6 +193,25 @@ Built jar: `build/libs/fabric-tab-<version>.jar`.
   `MinecraftServer.getPlayerList()`, `broadcastAll(...)`, `sendSystemMessage(...)`,
   `getAverageTickTimeNanos()`
 - Config v2
+
+### NeoForge
+
+- Uses Mojang names on every version (NeoForge ships Mojang mappings)
+- Build system: `net.neoforged.moddev` 2.0.148, Gradle 9.2.1
+- No mixins and no `fabric.mod.json`
+- Metadata template: `src/main/templates/META-INF/neoforge.mods.toml`
+- Main class `fr.juke.FabricTab` is annotated with `@Mod(FabricTab.MOD_ID)`
+- Event hooks:
+  - `NeoForge.EVENT_BUS.addListener(this::onServerTick)` with `ServerTickEvent.Post`
+  - `NeoForge.EVENT_BUS.addListener(this::onPlayerLogin)` with
+    `PlayerEvent.PlayerLoggedInEvent`
+- Config path: `FMLPaths.CONFIGDIR.get().resolve("fabric-tab.json")`
+- Tab list packet: `ClientboundTabListPacket`, sent with
+  `server.getPlayerList().broadcastAll(...)`
+- MOTD: `player.sendSystemMessage(Component.literal(motd))`
+- Config v2
+- NeoForge 1.21.x TOML includes `modLoader` and `loaderVersion`; the 26.x TOML does not.
+- The NeoForge mod id is `fabric_tab`; the config file name stays `fabric-tab.json`.
 
 ## Git workflow
 
@@ -210,6 +266,30 @@ Current version: `2.2.0`.
 
 The jar for a range is built from the **latest version in that range**.
 
+### NeoForge release mapping
+
+NeoForge builds are attached to the existing GitHub release for the matching Fabric range.
+They do **not** get separate GitHub tags or releases.
+
+| GitHub release | NeoForge assets |
+|---|---|
+| `2.2.0+1.21` | 1.21.1, 1.21.4, 1.21.8, 1.21.11 |
+| `2.2.0+26.1` | 26.1.2 |
+| `2.2.0+26.2` | 26.2, 26.3 |
+
+On Modrinth, NeoForge gets separate versions because the loader differs:
+
+- `2.2.0+1.21.1-neoforge`
+- `2.2.0+1.21.4-neoforge`
+- `2.2.0+1.21.8-neoforge`
+- `2.2.0+1.21.11-neoforge`
+- `2.2.0+26.1.2-neoforge`
+- `2.2.0+26.2-neoforge`
+- `2.2.0+26.3-neoforge`
+
+Use exact game versions for NeoForge (`["1.21.1"]`, not ranges). NeoForge does not support
+1.16.5–1.20.1, so there are no NeoForge builds for the older Fabric lines.
+
 ## GitHub releases
 
 Tags for grouped releases use this format:
@@ -251,6 +331,19 @@ fabric-tab-<modversion>+mc<range>.jar
 ```
 
 Examples: `fabric-tab-2.2.0+mc1.18.x.jar`, `fabric-tab-2.2.0+mc26.2-26.3.jar`.
+
+NeoForge assets use the same release tag as the matching Fabric range:
+
+```bash
+gh release upload "2.2.0+1.21" \
+  fabric-tab-2.2.0+mc1.21.1-neoforge.jar \
+  fabric-tab-2.2.0+mc1.21.4-neoforge.jar \
+  fabric-tab-2.2.0+mc1.21.8-neoforge.jar \
+  fabric-tab-2.2.0+mc1.21.11-neoforge.jar \
+  -R jukefr/fabric-tab
+```
+
+The release notes should list which NeoForge versions are in the release.
 
 When replacing an older release series, delete the superseded releases:
 
@@ -326,9 +419,11 @@ curl -X POST "https://api.modrinth.com/v2/version" \
 
 Rules:
 
-- `version_number` must be unique per project. Use `<modversion>+<range>`.
-- Each version lists every supported game version in `game_versions`.
-- `loaders` is `["fabric"]`.
+- `version_number` must be unique per project. Use `<modversion>+<range>` for Fabric and
+  `<modversion>+<mcversion>-neoforge` for NeoForge.
+- Each version lists every supported game version in `game_versions`. NeoForge versions use
+  exact game versions, not ranges.
+- `loaders` is `["fabric"]` for Fabric and `["neoforge"]` for NeoForge.
 - `environment` is `server_only`.
 - `version_type` is `release`.
 - Do not publish alpha/beta/snapshot Minecraft versions.
@@ -400,18 +495,21 @@ curl -s "https://api.modrinth.com/v2/version/<version-id>" | \
 1. Confirm `main` is at the latest supported version (`26.3`).
 2. Confirm every branch builds with its era's JDK.
 3. Bump `mod_version` in `gradle.properties` on every branch being released.
-4. Make sure each `fabric.mod.json` has the correct `minecraft` range and Java requirement.
-5. Build each range endpoint and verify the jar metadata:
+4. Make sure each loader metadata file has the correct Minecraft version/range and Java
+   requirement (`fabric.mod.json` for Fabric, `neoforge.mods.toml` for NeoForge).
+5. Build each Fabric range endpoint and each NeoForge version, and verify the jar metadata:
    ```bash
-   unzip -p build/libs/fabric-tab-<ver>.jar fabric.mod.json
+   unzip -p build/libs/fabric-tab-<ver>.jar fabric.mod.json       # Fabric
+   unzip -p build/libs/fabric-tab-<ver>.jar META-INF/neoforge.mods.toml  # NeoForge
    ```
 6. Commit and push all branches:
    ```bash
    git push origin --all
    ```
-7. Create and push grouped tags.
-8. Create GitHub releases for every range.
-9. Create the equivalent Modrinth versions.
+7. Create and push grouped tags for Fabric ranges.
+8. Create GitHub releases for every Fabric range, and upload the matching NeoForge jars to those
+   releases.
+9. Create the equivalent Modrinth versions for both loaders.
 10. Archive every Modrinth version older than the new release series (see above).
 11. Verify both release pages:
     - only the newest GitHub release is marked latest;
@@ -428,6 +526,14 @@ curl -s "https://api.modrinth.com/v2/version/<version-id>" | \
   token is invalid.
 - **Modrinth old versions**: archive them after a new release series ships, do not delete them.
   Keep only the newest series `listed`.
+- **NeoForge mod id**: NeoForge ids cannot contain `-`. It is `fabric_tab`, not `fabric-tab`.
+  The config file is still `fabric-tab.json`.
+- **NeoForge 26.x metadata**: the 26.x `neoforge.mods.toml` omits `modLoader` and
+  `loaderVersion`; 1.21.x includes them.
+- **NeoForge version coverage**: there are no NeoForge builds for 1.16.5–1.20.1, and NeoForge
+  only publishes for 26.1.2 (not 26.1 or 26.1.1).
+- **NeoForge first build**: ModDevGradle decompiles/patches Minecraft and can take several
+  minutes. Later builds are fast.
 - **Config compatibility**: never rename or remove config fields without a version bump and
   migration.
 - **MOTD formatting**: MOTD intentionally does not run through `TextFormatter`.
