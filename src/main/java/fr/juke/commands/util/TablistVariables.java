@@ -5,17 +5,16 @@ import net.minecraft.server.MinecraftServer;
 import java.lang.management.ManagementFactory;
 
 public class TablistVariables {
-    private static int mspt = 1;
-    private static int tps = 1;
+    private static int mspt = 0;
+    private static int tps = 20;
     private static int playerCount = 0;
-
 
     public static void onTick(MinecraftServer minecraftServer) {
         playerCount = minecraftServer.getCurrentPlayerCount();
-        mspt = (int) minecraftServer.getTickTime();
-        if (mspt != 0) {
-            tps = 1000 / mspt;
-        }
+
+        double tickTime = minecraftServer.getTickTime();
+        mspt = (int) tickTime;
+        tps = tickTime <= 0 ? 20 : (int) Math.min(20, Math.round(1000.0 / tickTime));
     }
 
     public static int getMspt() {
@@ -52,6 +51,4 @@ public class TablistVariables {
         s = s + (seconds < 10 ? "0" : "") + seconds;
         return s;
     }
-
-
 }
