@@ -1,15 +1,20 @@
 package fr.juke.util;
 
-public class TextFormatter {
-  public static TextFormatter INSTANCE = new TextFormatter();
+public final class TextFormatter {
+  private TextFormatter() {
+  }
 
   public static String tablistChars(String string) {
-    String output;
-    output = string.replaceAll("#TPS", Double.toString(TablistVariables.getTps()));
-    output = output.replaceAll("#MSPT", Double.toString(TablistVariables.getMspt()));
-    output = output.replaceAll("#UPTIME", TablistVariables.getUptime());
-    output = output.replaceAll("#PLAYERCOUNT", Integer.toString(TablistVariables.getPlayerCount()));
-    output = output.replaceAll("#N", "\n");
+    if (string == null) {
+      return "";
+    }
+
+    String output = string;
+    output = output.replace("#TPS", Double.toString(TablistVariables.getTps()));
+    output = output.replace("#MSPT", Double.toString(TablistVariables.getMspt()));
+    output = output.replace("#UPTIME", TablistVariables.getUptime());
+    output = output.replace("#PLAYERCOUNT", Integer.toString(TablistVariables.getPlayerCount()));
+    output = output.replace("#N", "\n");
     return output;
   }
 }

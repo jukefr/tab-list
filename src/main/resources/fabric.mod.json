@@ -18,12 +18,10 @@
     "client": [],
     "server": []
   },
-  "mixins": [
-    "fabric-tab.mixins.json"
-  ],
   "depends": {
     "fabricloader": ">=0.20.1",
     "java": ">=21",
-    "minecraft": "1.21.8"
+    "minecraft": ">=1.21 <1.22",
+    "fabric-api": "*"
   }
 }
