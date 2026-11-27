@@ -340,6 +340,61 @@ curl -s https://api.modrinth.com/v2/project/tab/version | \
   python3 -m json.tool | head -40
 ```
 
+### Archive superseded versions
+
+After publishing a new release series, archive every Modrinth version that is older than the
+new series. Do **not** delete them: archived versions remain downloadable by direct link, so
+users on old setups keep access, but they are no longer presented as current.
+
+The 2.2.0 release archived all 2.1.0, 2.0.x and 1.4.0 versions. Follow the same rule for future
+releases: keep only the versions belonging to the newest release series listed.
+
+Archiving needs the **`VERSION_WRITE`** scope (separate from `VERSION_CREATE`). The current PAT
+has both.
+
+Archive one version:
+
+```bash
+curl -X PATCH "https://api.modrinth.com/v2/version/<version-id>" \
+  -A "jukefr/fabric-tab-publisher/1.0 (code@juke.fr)" \
+  -H "Authorization: $MODRINTH_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"status":"archived"}'
+```
+
+A successful request returns `204 No Content`.
+
+Archive all old versions in one pass:
+
+```bash
+curl -s https://api.modrinth.com/v2/project/tab/version > versions.json
+
+python3 - <<'EOF' > old_versions.txt
+import json
+for v in json.load(open("versions.json")):
+    if not v["version_number"].startswith("<new-version>+"):
+        print(v["id"], v["version_number"])
+EOF
+
+while read -r id version; do
+  code=$(curl -s -o /dev/null -w '%{http_code}' -X PATCH \
+    "https://api.modrinth.com/v2/version/$id" \
+    -A "jukefr/fabric-tab-publisher/1.0 (code@juke.fr)" \
+    -H "Authorization: $MODRINTH_TOKEN" \
+    -H "Content-Type: application/json" \
+    -d '{"status":"archived"}')
+  echo "$version -> $code"
+done < old_versions.txt
+```
+
+Note: the project version-list endpoint can return stale cached statuses for a short while. Check
+individual versions to confirm:
+
+```bash
+curl -s "https://api.modrinth.com/v2/version/<version-id>" | \
+  python3 -c "import json,sys; d=json.load(sys.stdin); print(d['version_number'], d['status'])"
+```
+
 ## Release checklist
 
 1. Confirm `main` is at the latest supported version (`26.3`).
@@ -357,7 +412,10 @@ curl -s https://api.modrinth.com/v2/project/tab/version | \
 7. Create and push grouped tags.
 8. Create GitHub releases for every range.
 9. Create the equivalent Modrinth versions.
-10. Verify both release pages, and mark only the newest release as latest.
+10. Archive every Modrinth version older than the new release series (see above).
+11. Verify both release pages:
+    - only the newest GitHub release is marked latest;
+    - only versions from the newest release series are `listed` on Modrinth.
 
 ## Common pitfalls
 
@@ -368,6 +426,8 @@ curl -s https://api.modrinth.com/v2/project/tab/version | \
 - **Fabric API dependency id**: old branches use `"fabric": "*"`; 1.21+ use `"fabric-api": "*"`.
 - **Modrinth 401 on `/v2/user`**: expected if the PAT lacks `USER_READ`; it does not mean the
   token is invalid.
+- **Modrinth old versions**: archive them after a new release series ships, do not delete them.
+  Keep only the newest series `listed`.
 - **Config compatibility**: never rename or remove config fields without a version bump and
   migration.
 - **MOTD formatting**: MOTD intentionally does not run through `TextFormatter`.
