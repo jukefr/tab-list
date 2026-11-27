@@ -2,9 +2,9 @@ package fr.juke.config;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import net.fabricmc.loader.api.FabricLoader;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import com.mojang.logging.LogUtils;
+import net.neoforged.fml.loading.FMLPaths;
+import org.slf4j.Logger;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -17,7 +17,7 @@ import java.nio.file.StandardCopyOption;
 import java.time.Instant;
 
 public class Config {
-    private static final Logger LOGGER = LogManager.getLogger("fabric-tab");
+    private static final Logger LOGGER = LogUtils.getLogger();
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final String FILE_NAME = "fabric-tab.json";
 
@@ -111,7 +111,7 @@ public class Config {
     }
 
     private static Path path() {
-        return FabricLoader.getInstance().getConfigDirectory().toPath().resolve(FILE_NAME);
+        return FMLPaths.CONFIGDIR.get().resolve(FILE_NAME);
     }
 
     private void saveQuietly() {
