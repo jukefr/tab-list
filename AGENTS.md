@@ -19,6 +19,64 @@ that customizes the player list (tab list) header/footer and sends a MOTD on log
 The display name changed from "Fabric Tab List" to "Tab List". Do **not** rename the internal
 mod ids, config file, or jar prefix (`fabric-tab`) without a compatibility/migration plan.
 
+## Writing the README and project pages
+
+`README.md` is the public landing page for GitHub and is mirrored to the Modrinth project body.
+Write for someone who just wants to install the mod, then for someone searching for a specific
+feature. Optimize for useful search terms, not keyword density.
+
+### Required structure
+
+1. `# Tab List` as the H1.
+2. A one-line tagline containing the important terms:
+   Minecraft, tab list, header, footer, MOTD, Fabric, NeoForge.
+3. The screenshot near the top, with descriptive alt text. Keep the screenshot.
+4. Optional badges: Modrinth downloads, latest GitHub release, license. Do not add badge walls.
+5. A short paragraph explaining what the mod does and that it is server-side only.
+6. Features.
+7. Installation / quick start.
+8. Supported versions.
+9. Configuration.
+10. Placeholders.
+11. Formatting codes.
+12. A short FAQ for common confusion.
+13. Links.
+14. License.
+
+### Content rules
+
+- Keep the README accurate. Do not advertise Minecraft versions that have no release.
+- Use natural phrases such as "Minecraft tab list", "player list header and footer",
+  "TPS and MSPT placeholders", "Fabric tab list", and "NeoForge tab list". Do not stuff them.
+- Put the quick start near the top. Users should not have to scroll past marketing copy.
+- Show the real config format, matching the code. Explain that 1.16.5–1.19.4 use config v1 and
+  1.20+ use config v2.
+- Include a copy-paste footer example using `#TPS`, `#MSPT`, `#PLAYERCOUNT`, `#UPTIME`, and `#N`.
+- State clearly that the mod is server-side only, that Fabric needs Fabric API, and that the
+  server must be restarted after config changes.
+- State that MOTD is sent as-is and does not process placeholders.
+- Use absolute links (`https://github.com/jukefr/tab-list/...` and
+  `https://modrinth.com/mod/tab`). Relative links work on GitHub but break on Modrinth.
+- Do not add fake benchmarks, roadmap promises, giant changelogs, or generic filler.
+- Do not remove the screenshot or replace it with a text-only description.
+- Keep the FAQ short and solve real problems: client-side confusion, Fabric API, reloads,
+  MOTD placeholders, bug reports.
+
+### Syncing Modrinth
+
+The Modrinth page keeps the slug `tab` and must stay in sync with the README:
+
+- Project title: `Tab List`
+- Body: contents of `README.md`
+- Source URL: `https://github.com/jukefr/tab-list`
+- Issues URL: `https://github.com/jukefr/tab-list/issues`
+
+After changing the README, update the Modrinth project body with
+`PATCH /v2/project/9J38edBm`. Keep the slug and don't publish a new version just for docs unless
+the release notes also changed.
+
+Also update the GitHub repository description and homepage when the positioning changes.
+
 ## The most important rule
 
 **Do not change the config file format unless explicitly asked to.**
