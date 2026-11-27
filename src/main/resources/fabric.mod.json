@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "fabric-tab",
   "version": "${version}",
-  "name": "fabric-tab",
+  "name": "Tab List",
   "description": "very basic colored tablist header and footer and motd configuration for fabric servers",
   "authors": [
     "catpissbonghits"
